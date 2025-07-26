@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ayat Alkitab TB</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: transparent;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    #ref {
+      font-size: 40px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #text {
+      font-size: 36px;
+    }
+  </style>
+</head>
+<body>
+  <div id="ref">Memuat...</div>
+  <div id="text"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const book = params.get('book') || 'Yohanes';
+    const chapter = params.get('chapter') || '3';
+    const verse = params.get('verse') || '16';
+    const apiURL = `https://api-alkitab.herokuapp.com/v2/passage/${encodeURIComponent(book)}/${encodeURIComponent(chapter)}/${encodeURIComponent(verse)}?ver=tb`;
+
+    fetch(apiURL)
+      .then(res => res.json())
+      .then(data => {
+        const verseObj = data.verses && data.verses[0];
+        document.getElementById('ref').innerText = `${book} ${chapter}:${verse}`;
+        document.getElementById('text').innerText = verseObj?.content || 'Ayat tidak ditemukan.';
+      })
+      .catch(err => {
+        document.getElementById('ref').innerText = "Error";
+        document.getElementById('text').innerText = "Gagal memuat ayat.";
+      });
+  </script>
+</body>
+</html>
